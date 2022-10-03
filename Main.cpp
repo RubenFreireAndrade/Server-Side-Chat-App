@@ -6,6 +6,7 @@
 int main(int argc, char* argv[])
 {
 	IPaddress ip;
+	std::string message = "Hello! Welcome to the chat";
 	const int port = 1234;
 	TCPsocket listenSocket = nullptr;
 	TCPsocket clientSocket = nullptr;
@@ -41,8 +42,18 @@ int main(int argc, char* argv[])
 		std::cout << ":" << std::endl;
 		SDL_Delay(1000);
 	}
-	SDLNet_TCP_Close(listenSocket);
 	std::cout << "Client connected!" << std::endl;
+	SDLNet_TCP_Close(listenSocket);
+
+	int length = message.length() + 1;
+	if (SDLNet_TCP_Send(clientSocket, message.c_str(), length) < length)
+	{
+		std::cout << "Could not send message" << std::endl;
+	}
+	else
+	{
+		std::cout << "Message sent successfully! " << std::endl;
+	}
 
 
 
