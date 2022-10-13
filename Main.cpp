@@ -12,6 +12,9 @@ int main(int argc, char* argv[])
 
 	hostTcp.OpenSocket();
 	hostTcp.AcceptConnection();
+	/*while (isAppRunning)
+	{
+	}*/
 
 	SDLNet_Quit();
 	SDL_Quit();

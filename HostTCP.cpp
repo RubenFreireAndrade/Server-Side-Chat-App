@@ -47,8 +47,20 @@ void HostTCP::AcceptConnection()
 		SDL_Delay(1000);
 	}
 	std::cout << "Client connected!" << std::endl;
+	SendMessage();
+
+	if (clientSocket)
+	{
+		ReceiveMessage();
+	}
 	//SDLNet_TCP_Close(listenSocket);
 
+	//clientSocket = nullptr;
+	//return 0;
+}
+
+void HostTCP::SendMessage()
+{
 	int length = message.length() + 1;
 	if (SDLNet_TCP_Send(clientSocket, message.c_str(), length) < length)
 	{
@@ -56,8 +68,20 @@ void HostTCP::AcceptConnection()
 	}
 	else
 	{
-		std::cout << "Message sent successfully! " << std::endl;
+		std::cout << "Message sent successfully!" << std::endl;
 	}
-	//clientSocket = nullptr;
-	//return 0;
+}
+
+void HostTCP::ReceiveMessage()
+{
+	char message[100];
+	//std::string message[100];
+	if (SDLNet_TCP_Recv(clientSocket, message, 100) <= 0)
+	{
+		std::cout << "Could not receive message" << std::endl;
+	}
+	else
+	{
+		std::cout << "Message received: " << message << std::endl;
+	}
 }

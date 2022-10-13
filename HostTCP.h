@@ -12,6 +12,8 @@ public:
 	~HostTCP();
 	int OpenSocket();
 	void AcceptConnection();
+	void SendMessage();
+	void ReceiveMessage();
 
 	const int port = 1234;
 	const char* client = "10.18.27.96";
