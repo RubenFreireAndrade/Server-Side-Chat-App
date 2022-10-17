@@ -1,5 +1,6 @@
-#include<iostream>
 #include<string>
+#include<thread>
+#include<iostream>
 #include<SDL.h>
 #include<SDL_net.h>
 
@@ -7,16 +8,15 @@
 
 int main(int argc, char* argv[])
 {
-	bool isAppRunning = true;
 	HostTCP hostTcp;
+	bool isAppRunning = true;
 
-	hostTcp.OpenSocket();
-	hostTcp.AcceptConnection();
-	/*while (isAppRunning)
+	hostTcp.SDLInitialize();
+	while (isAppRunning)
 	{
-	}*/
-
-	SDLNet_Quit();
-	SDL_Quit();
+		hostTcp.OpenSocket();
+		hostTcp.AcceptConnection();
+	}
+	hostTcp.ShutDown();
 	return 0;
 }
