@@ -10,21 +10,24 @@ class HostTCP
 public:
 	HostTCP();
 	~HostTCP();
-	void SDLInitialize();
-	int OpenSocket();
-	void AcceptConnection();
-	void SendMessage();
-	void ReceiveMessage();
+	bool SDLInitialize();
+	bool OpenSocket();
+	bool AcceptConnection();
+	bool SendWelcomeMessage(TCPsocket sock, std::string message);
+	bool ReceiveMessage(TCPsocket sock);
 	void ShutDown();
 
+	int maxClients = 5;
+	int totalClients = 0;
 	const int port = 1234;
 	const char* client = "10.18.27.96";
-	std::string welcomeMessage = "Hello! Welcome to the chat.";
+	const std::string welcomeMessage = "Hello! Welcome to the chat.";
 	IPaddress ip;
 	TCPsocket listenSocket = nullptr;
 	TCPsocket clientSocket = nullptr;
 
 	std::vector<TCPsocket> socketContainer;
+	TCPsocket clientSockets[];
 
 private:
 

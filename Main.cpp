@@ -11,10 +11,13 @@ int main(int argc, char* argv[])
 	HostTCP hostTcp;
 	bool isAppRunning = true;
 
+	std::thread openSockThread;
+
 	hostTcp.SDLInitialize();
+	//openSockThread = std::thread();
+	hostTcp.OpenSocket();
 	while (isAppRunning)
 	{
-		hostTcp.OpenSocket();
 		hostTcp.AcceptConnection();
 	}
 	hostTcp.ShutDown();
