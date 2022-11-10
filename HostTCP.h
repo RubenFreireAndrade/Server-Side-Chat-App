@@ -1,8 +1,10 @@
 #pragma once
-#include<SDL.h>
 #include<string>
 #include<vector>
+#include<thread>
 #include<iostream>
+
+#include<SDL.h>
 #include<SDL_net.h>
 
 class HostTCP
@@ -12,7 +14,7 @@ public:
 	~HostTCP();
 	bool SDLInitialize();
 	bool OpenSocket();
-	bool AcceptConnection();
+	bool ListenSocket();
 	bool SendWelcomeMessage(TCPsocket sock, std::string message);
 	bool ReceiveMessage(TCPsocket sock);
 	void ShutDown();
@@ -25,11 +27,9 @@ public:
 	IPaddress ip;
 	TCPsocket listenSocket = nullptr;
 	TCPsocket clientSocket = nullptr;
-
-	std::vector<TCPsocket> socketContainer;
 	TCPsocket clientSockets[];
+	//std::vector<TCPsocket> socketContainer;
 
 private:
 
 };
-

@@ -11,14 +11,19 @@ int main(int argc, char* argv[])
 	HostTCP hostTcp;
 	bool isAppRunning = true;
 
-	std::thread openSockThread;
-
 	hostTcp.SDLInitialize();
-	//openSockThread = std::thread();
 	hostTcp.OpenSocket();
 	while (isAppRunning)
 	{
-		hostTcp.AcceptConnection();
+		std::thread acceptSockThread(&HostTCP::ListenSocket, &hostTcp);
+		acceptSockThread.join();
+
+		//std::thread sendMessageThread(&HostTCP::SendWelcomeMessage, &hostTcp);
+		//sendMessageThread.detach();
+		
+		//std::thread receiveMessageThread(&HostTCP::ReceiveMessage, &hostTcp);
+		//receiveMessageThread.join();
+		//hostTcp.AcceptConnection();
 	}
 	hostTcp.ShutDown();
 	return 0;

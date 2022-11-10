@@ -39,7 +39,7 @@ bool HostTCP::OpenSocket()
 	}
 }
 
-bool HostTCP::AcceptConnection()
+bool HostTCP::ListenSocket()
 {
 	while (totalClients < maxClients)
 	{
@@ -55,6 +55,7 @@ bool HostTCP::AcceptConnection()
 		{
 			clientSockets[totalClients] = tempSocket;
 			std::cout << "Client connected!" << std::endl;
+			//std::thread welcomeMsg((SendWelcomeMessage, clientSockets[totalClients], welcomeMessage));
 			SendWelcomeMessage(clientSockets[totalClients], welcomeMessage);
 			ReceiveMessage(clientSockets[totalClients]);
 			totalClients++;
