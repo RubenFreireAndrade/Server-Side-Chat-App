@@ -4,27 +4,19 @@
 #include<SDL.h>
 #include<SDL_net.h>
 
-#include"HostTCP.h"
+#include"App.h"
 
 int main(int argc, char* argv[])
 {
-	HostTCP hostTcp;
+	App app;
 	bool isAppRunning = true;
-
-	hostTcp.SDLInitialize();
-	hostTcp.OpenSocket();
 	while (isAppRunning)
 	{
-		std::thread acceptSockThread(&HostTCP::ListenSocket, &hostTcp);
-		acceptSockThread.join();
-
-		//std::thread sendMessageThread(&HostTCP::SendWelcomeMessage, &hostTcp);
-		//sendMessageThread.detach();
-		
-		//std::thread receiveMessageThread(&HostTCP::ReceiveMessage, &hostTcp);
-		//receiveMessageThread.join();
-		//hostTcp.AcceptConnection();
+		if (!app.RunApp())
+		{
+			app.ShutDown();
+			return isAppRunning = false;
+		}
 	}
-	hostTcp.ShutDown();
 	return 0;
 }

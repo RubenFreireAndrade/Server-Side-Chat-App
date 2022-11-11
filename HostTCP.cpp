@@ -55,14 +55,11 @@ bool HostTCP::ListenSocket()
 		{
 			clientSockets[totalClients] = tempSocket;
 			std::cout << "Client connected!" << std::endl;
-			//std::thread welcomeMsg((SendWelcomeMessage, clientSockets[totalClients], welcomeMessage));
-			SendWelcomeMessage(clientSockets[totalClients], welcomeMessage);
-			ReceiveMessage(clientSockets[totalClients]);
-			totalClients++;
-			std::cout << "number of clients: " << totalClients << std::endl;
+			//ReceiveMessage(clientSockets[totalClients]);
 			return true;
 		}
 	}
+	return false;
 }
 
 bool HostTCP::SendWelcomeMessage(TCPsocket sock, std::string message)

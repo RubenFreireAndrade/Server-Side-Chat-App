@@ -27,7 +27,7 @@ public:
 	IPaddress ip;
 	TCPsocket listenSocket = nullptr;
 	TCPsocket clientSocket = nullptr;
-	TCPsocket clientSockets[];
+	TCPsocket clientSockets[5];
 	//std::vector<TCPsocket> socketContainer;
 
 private:
