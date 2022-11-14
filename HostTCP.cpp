@@ -43,9 +43,9 @@ bool HostTCP::ListenSocket()
 {
 	while (totalClients < maxClients)
 	{
-		TCPsocket tempSocket = nullptr;
-		tempSocket = SDLNet_TCP_Accept(listenSocket);
-		if (!tempSocket)
+		//TCPsocket tempSocket = nullptr;
+		clientSocket = SDLNet_TCP_Accept(listenSocket);
+		if (!clientSocket)
 		{
 			std::cout << "Listening for Clients. . ." << std::endl;
 			SDL_Delay(1000);
@@ -53,7 +53,7 @@ bool HostTCP::ListenSocket()
 		}
 		else
 		{
-			clientSockets[totalClients] = tempSocket;
+			//clientSockets[totalClients] = tempSocket;
 			std::cout << "Client connected!" << std::endl;
 			//ReceiveMessage(clientSockets[totalClients]);
 			return true;
@@ -70,14 +70,14 @@ bool HostTCP::SendWelcomeMessage(TCPsocket sock, std::string message)
 		std::cout << "Welcome message sent successfully!" << std::endl;
 		return true;
 	}
-	std::cout << "Could not send message" << std::endl;
+	std::cout << "Could not send message " << sock << std::endl;
 	return false;
 }
 
 bool HostTCP::ReceiveMessage(TCPsocket sock)
 {
-	char message[100];
-	if (SDLNet_TCP_Recv(sock, message, 100) <= 0)
+	char message[2000];
+	if (SDLNet_TCP_Recv(sock, message, 2000) <= 0)
 	{
 		std::cout << "Message received: " << message << std::endl;
 		return true;

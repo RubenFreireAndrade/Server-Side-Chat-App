@@ -16,12 +16,16 @@ bool App::RunApp()
 
 	while (isAppRunning)
 	{
+
 		if (hostTcp->ListenSocket())
 		{
-			std::thread welcomeMsgThread(&HostTCP::SendWelcomeMessage, hostTcp, hostTcp->clientSockets[hostTcp->totalClients], hostTcp->welcomeMessage);
+			std::thread welcomeMsgThread(&HostTCP::SendWelcomeMessage, hostTcp, hostTcp->clientSocket, hostTcp->welcomeMessage);
 			hostTcp->totalClients++;
 			std::cout << hostTcp->totalClients << std::endl;
 			welcomeMsgThread.detach();
+
+			/*std::thread receiveMsgThread(&HostTCP::ReceiveMessage, hostTcp, hostTcp->clientSockets[hostTcp->totalClients]);
+			receiveMsgThread.detach();*/
 		}
 	}
 	return false;

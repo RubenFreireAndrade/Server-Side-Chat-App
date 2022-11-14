@@ -28,7 +28,6 @@ public:
 	TCPsocket listenSocket = nullptr;
 	TCPsocket clientSocket = nullptr;
 	TCPsocket clientSockets[5];
-	//std::vector<TCPsocket> socketContainer;
 
 private:
 
