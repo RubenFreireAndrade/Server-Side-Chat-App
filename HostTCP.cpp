@@ -21,6 +21,7 @@ bool HostTCP::SDLInitialize()
 		std::cout << "SDL_net is not initialize properly" << std::endl;
 		return false;
 	}
+	return true;
 }
 
 bool HostTCP::OpenSocket()
@@ -37,6 +38,7 @@ bool HostTCP::OpenSocket()
 		std::cout << "Could not open socket" << std::endl;
 		return false;
 	}
+	return true;
 }
 
 bool HostTCP::ListenSocket()
@@ -49,7 +51,6 @@ bool HostTCP::ListenSocket()
 		{
 			std::cout << "Listening for Clients. . ." << std::endl;
 			SDL_Delay(1000);
-			return false;
 		}
 		else
 		{
@@ -59,7 +60,6 @@ bool HostTCP::ListenSocket()
 			return true;
 		}
 	}
-	return false;
 }
 
 bool HostTCP::SendWelcomeMessage(TCPsocket sock, std::string message)
@@ -70,14 +70,14 @@ bool HostTCP::SendWelcomeMessage(TCPsocket sock, std::string message)
 		std::cout << "Welcome message sent successfully!" << std::endl;
 		return true;
 	}
-	std::cout << "Could not send message " << sock << std::endl;
+	std::cout << "Could not send message " << std::endl;
 	return false;
 }
 
 bool HostTCP::ReceiveMessage(TCPsocket sock)
 {
-	char message[2000];
-	if (SDLNet_TCP_Recv(sock, message, 2000) <= 0)
+	char message[100];
+	if (SDLNet_TCP_Recv(sock, message, 100) <= 0)
 	{
 		std::cout << "Message received: " << message << std::endl;
 		return true;

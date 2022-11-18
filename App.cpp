@@ -7,26 +7,25 @@ App::App()
 
 bool App::RunApp()
 {
-	bool isAppRunning = true;
+	bool isListening = true;
 
 	hostTcp->SDLInitialize();
 	hostTcp->OpenSocket();
 	/*std::thread listenSockThread(&HostTCP::ListenSocket, hostTcp);
 	listenSockThread.join();*/
 
-	while (isAppRunning)
+	while (isListening)
 	{
-
 		if (hostTcp->ListenSocket())
 		{
-			std::thread welcomeMsgThread(&HostTCP::SendWelcomeMessage, hostTcp, hostTcp->clientSocket, hostTcp->welcomeMessage);
+			sendMsgThr = std::thread(&HostTCP::SendWelcomeMessage, hostTcp, hostTcp->clientSocket, hostTcp->welcomeMessage);
 			hostTcp->totalClients++;
 			std::cout << hostTcp->totalClients << std::endl;
-			welcomeMsgThread.detach();
 
-			/*std::thread receiveMsgThread(&HostTCP::ReceiveMessage, hostTcp, hostTcp->clientSockets[hostTcp->totalClients]);
-			receiveMsgThread.detach();*/
+			sendMsgThr.join();
 		}
+		/*std::thread receiveMsgThread(&HostTCP::ReceiveMessage, hostTcp, hostTcp->listenSocket);
+		receiveMsgThread.detach();*/
 	}
 	return false;
 }

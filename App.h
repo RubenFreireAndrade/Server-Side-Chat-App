@@ -13,5 +13,6 @@ public:
 	void ShutDown();
 private:
 	HostTCP* hostTcp;
+	std::thread sendMsgThr;
 };
 
