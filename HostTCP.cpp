@@ -45,7 +45,6 @@ bool HostTCP::ListenSocket()
 {
 	while (totalClients < maxClients)
 	{
-		//TCPsocket tempSocket = nullptr;
 		clientSocket = SDLNet_TCP_Accept(listenSocket);
 		if (!clientSocket)
 		{
@@ -54,9 +53,8 @@ bool HostTCP::ListenSocket()
 		}
 		else
 		{
-			//clientSockets[totalClients] = tempSocket;
+			clientSockets[totalClients] = clientSocket;
 			std::cout << "Client connected!" << std::endl;
-			//ReceiveMessage(clientSockets[totalClients]);
 			return true;
 		}
 	}
@@ -65,25 +63,30 @@ bool HostTCP::ListenSocket()
 bool HostTCP::SendWelcomeMessage(TCPsocket sock, std::string message)
 {
 	int length = message.length() + 1;
-	if (SDLNet_TCP_Send(sock, message.c_str(), length) < length)
+	if (SDLNet_TCP_Send(sock, message.c_str(), length))
 	{
 		std::cout << "Welcome message sent successfully!" << std::endl;
 		return true;
 	}
-	std::cout << "Could not send message " << std::endl;
+	std::cout << "Could not send message" << std::endl;
 	return false;
 }
 
-bool HostTCP::ReceiveMessage(TCPsocket sock)
+bool HostTCP::ReceiveMessage(/*TCPsocket sock*/)
 {
 	char message[100];
-	if (SDLNet_TCP_Recv(sock, message, 100) <= 0)
+	if (SDLNet_TCP_Recv(clientSockets[totalClients], message, 100))
 	{
 		std::cout << "Message received: " << message << std::endl;
 		return true;
 	}
 	std::cout << "Could not receive message" << std::endl;
 	return false;
+}
+
+bool HostTCP::GetMsgSentFlag()
+{
+	return hasMsgSent;
 }
 
 void HostTCP::ShutDown()

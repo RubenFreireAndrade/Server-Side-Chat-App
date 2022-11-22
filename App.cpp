@@ -2,35 +2,33 @@
 
 App::App()
 {
-	hostTcp = new HostTCP();
+	tcp = new HostTCP();
 }
 
 bool App::RunApp()
 {
-	bool isListening = true;
+	bool isOpen = true;
 
-	hostTcp->SDLInitialize();
-	hostTcp->OpenSocket();
+	tcp->SDLInitialize();
+	tcp->OpenSocket();
 	/*std::thread listenSockThread(&HostTCP::ListenSocket, hostTcp);
 	listenSockThread.join();*/
 
-	while (isListening)
+	while (tcp->ListenSocket())
 	{
-		if (hostTcp->ListenSocket())
-		{
-			sendMsgThr = std::thread(&HostTCP::SendWelcomeMessage, hostTcp, hostTcp->clientSocket, hostTcp->welcomeMessage);
-			hostTcp->totalClients++;
-			std::cout << hostTcp->totalClients << std::endl;
+		sendMsgThr = std::thread(&HostTCP::SendWelcomeMessage, tcp, tcp->clientSockets[tcp->totalClients], tcp->welcomeMessage);
+		//tcp->totalClients++;
+		//std::cout << tcp->totalClients << std::endl;
+		sendMsgThr.detach();
 
-			sendMsgThr.join();
-		}
-		/*std::thread receiveMsgThread(&HostTCP::ReceiveMessage, hostTcp, hostTcp->listenSocket);
-		receiveMsgThread.detach();*/
+		recieveMsgThr = std::thread(&HostTCP::ReceiveMessage, tcp /*tcp->clientSockets[tcp->totalClients]*/);
+		recieveMsgThr.detach();
 	}
 	return false;
+
 }
 
 void App::ShutDown()
 {
-	hostTcp->ShutDown();
+	tcp->ShutDown();
 }

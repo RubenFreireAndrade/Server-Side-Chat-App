@@ -12,7 +12,8 @@ public:
 	bool RunApp();
 	void ShutDown();
 private:
-	HostTCP* hostTcp;
+	HostTCP* tcp;
 	std::thread sendMsgThr;
+	std::thread recieveMsgThr;
 };
 
