@@ -14,7 +14,7 @@ public:
 	void ShutDown();
 private:
 	HostTCP* tcp;
-	std::thread sendMsgThr;
-	std::thread recieveMsgThr;
+	//std::thread sendMsgThr;
+	//std::thread recieveMsgThr;
 };
 

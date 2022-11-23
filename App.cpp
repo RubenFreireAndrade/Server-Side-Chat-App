@@ -21,21 +21,21 @@ bool App::InitApp()
 
 bool App::RunApp()
 {
-	/*std::thread listenSockThread(&HostTCP::ListenSocket, hostTcp);
-	listenSockThread.join();*/
-
 	while (tcp->ListenSocket())
 	{
-		sendMsgThr = std::thread(&HostTCP::SendWelcomeMessage, tcp, tcp->clientSockets[tcp->totalClients], tcp->welcomeMessage);
-		//tcp->totalClients++;
-		//std::cout << tcp->totalClients << std::endl;
-		sendMsgThr.detach();
-
-		recieveMsgThr = std::thread(&HostTCP::ReceiveMessage, tcp /*tcp->clientSockets[tcp->totalClients]*/);
-		recieveMsgThr.detach();
+		std::thread sendMsgThr(&HostTCP::SendWelcomeMessage, tcp, tcp->GetClientSock(), tcp->GetWelcomeMessage());
+		if (sendMsgThr.joinable())
+		{
+			sendMsgThr.join();
+		}
+		std::thread receiveMsgThr(&HostTCP::ReceiveMessage, tcp);
+		if (tcp->GetMsgSentFlag())
+		{
+			receiveMsgThr.detach();
+		}
+		
 	}
-	return false;
-
+	return true;
 }
 
 void App::ShutDown()

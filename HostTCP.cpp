@@ -45,16 +45,18 @@ bool HostTCP::ListenSocket()
 {
 	while (totalClients < maxClients)
 	{
-		clientSocket = SDLNet_TCP_Accept(listenSocket);
-		if (!clientSocket)
+		TCPsocket tempSock = nullptr;
+		tempSock = SDLNet_TCP_Accept(listenSocket);
+		if (!tempSock)
 		{
 			std::cout << "Listening for Clients. . ." << std::endl;
 			SDL_Delay(1000);
 		}
 		else
 		{
-			clientSockets[totalClients] = clientSocket;
-			std::cout << "Client connected!" << std::endl;
+			clientIp = SDLNet_TCP_GetPeerAddress(tempSock);
+			clientSockets[totalClients] = tempSock;
+			std::cout << "Client connected: " << SDLNet_Read32(&clientIp->port) << std::endl;
 			return true;
 		}
 	}
@@ -66,19 +68,21 @@ bool HostTCP::SendWelcomeMessage(TCPsocket sock, std::string message)
 	if (SDLNet_TCP_Send(sock, message.c_str(), length))
 	{
 		std::cout << "Welcome message sent successfully!" << std::endl;
+		hasMsgSent = true;
 		return true;
 	}
 	std::cout << "Could not send message" << std::endl;
 	return false;
 }
 
-bool HostTCP::ReceiveMessage(/*TCPsocket sock*/)
+bool HostTCP::ReceiveMessage()
 {
 	char message[100];
-	if (SDLNet_TCP_Recv(clientSockets[totalClients], message, 100))
+	while (SDLNet_TCP_Recv(clientSockets[totalClients], message, 100))
 	{
-		std::cout << "Message received: " << message << std::endl;
-		return true;
+		std::cout << SDLNet_Read32(&clientIp->port) << " Sent: " << message << std::endl;
+		// Do something here to check if server lost connection with Client and return "is lost connection".
+		//return true;
 	}
 	std::cout << "Could not receive message" << std::endl;
 	return false;
@@ -87,6 +91,16 @@ bool HostTCP::ReceiveMessage(/*TCPsocket sock*/)
 bool HostTCP::GetMsgSentFlag()
 {
 	return hasMsgSent;
+}
+
+TCPsocket HostTCP::GetClientSock()
+{
+	return clientSockets[totalClients];
+}
+
+std::string HostTCP::GetWelcomeMessage()
+{
+	return welcomeMessage;
 }
 
 void HostTCP::ShutDown()

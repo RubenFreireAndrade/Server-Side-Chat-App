@@ -18,20 +18,21 @@ public:
 	bool SendWelcomeMessage(TCPsocket sock, std::string message);
 	bool ReceiveMessage(/*TCPsocket sock*/);
 	bool GetMsgSentFlag();
+	TCPsocket GetClientSock();
+	std::string GetWelcomeMessage();
 	void ShutDown();
 
+private:
 	int maxClients = 5;
 	int totalClients = 0;
-	bool hasMsgSent = false;
 	const int port = 1234;
-	const char* client = "10.18.27.96";
+	bool hasMsgSent = false;
 	const std::string welcomeMessage = "Hello! Welcome to the chat.";
+
 	IPaddress ip;
+	IPaddress* clientIp;
+
+	TCPsocket clientSockets[5];
 	TCPsocket listenSocket = nullptr;
 	TCPsocket clientSocket = nullptr;
-	TCPsocket clientSockets[5];
-	SDLNet_SocketSet socketSet;
-
-private:
-
 };
