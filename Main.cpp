@@ -9,14 +9,10 @@
 int main(int argc, char* argv[])
 {
 	App app;
-	bool isAppRunning = true;
-	while (isAppRunning)
+	if (app.InitApp())
 	{
-		if (!app.RunApp())
-		{
-			app.ShutDown();
-			return isAppRunning = false;
-		}
+		app.RunApp();
 	}
+	app.ShutDown();
 	return 0;
 }

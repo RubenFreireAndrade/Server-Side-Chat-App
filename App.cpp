@@ -5,12 +5,22 @@ App::App()
 	tcp = new HostTCP();
 }
 
+bool App::InitApp()
+{
+	if (!tcp->SDLInitialize())
+	{
+		return false;
+	}
+
+	if (!tcp->OpenSocket())
+	{
+		return false;
+	}
+	return true;
+}
+
 bool App::RunApp()
 {
-	bool isOpen = true;
-
-	tcp->SDLInitialize();
-	tcp->OpenSocket();
 	/*std::thread listenSockThread(&HostTCP::ListenSocket, hostTcp);
 	listenSockThread.join();*/
 

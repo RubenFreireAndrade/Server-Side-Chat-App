@@ -9,6 +9,7 @@ class App
 {
 public:
 	App();
+	bool InitApp();
 	bool RunApp();
 	void ShutDown();
 private:
