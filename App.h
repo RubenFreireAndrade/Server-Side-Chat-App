@@ -2,6 +2,7 @@
 #include<string>
 #include<iostream>
 #include<thread>
+#include<mutex>
 
 #include"HostTCP.h"
 
@@ -14,7 +15,5 @@ public:
 	void ShutDown();
 private:
 	HostTCP* tcp;
-	//std::thread sendMsgThr;
-	//std::thread recieveMsgThr;
 };
 

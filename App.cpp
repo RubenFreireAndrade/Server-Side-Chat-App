@@ -1,5 +1,7 @@
 #include "App.h"
 
+std::mutex mutex;
+
 App::App()
 {
 	tcp = new HostTCP();
@@ -23,17 +25,16 @@ bool App::RunApp()
 {
 	while (tcp->ListenSocket())
 	{
-		std::thread sendMsgThr(&HostTCP::SendWelcomeMessage, tcp, tcp->GetClientSock(), tcp->GetWelcomeMessage());
-		if (sendMsgThr.joinable())
-		{
-			sendMsgThr.join();
-		}
-		std::thread receiveMsgThr(&HostTCP::ReceiveMessage, tcp);
+		std::thread sendMsgThr(&HostTCP::SendWelcomeMessage, tcp, /*tcp->GetClientSock(),*/ tcp->GetWelcomeMessage());
+		sendMsgThr.join();
 		if (tcp->GetMsgSentFlag())
 		{
-			receiveMsgThr.detach();
+			std::thread receiveMsgThr(&HostTCP::ReceiveMessage, tcp);
+			if (receiveMsgThr.joinable())
+			{
+				receiveMsgThr.detach();
+			}
 		}
-		
 	}
 	return true;
 }

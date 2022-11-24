@@ -1,5 +1,7 @@
 #include "HostTCP.h"
 
+std::mutex m;
+
 HostTCP::HostTCP()
 {
 }
@@ -41,33 +43,45 @@ bool HostTCP::OpenSocket()
 	return true;
 }
 
-bool HostTCP::ListenSocket()
+TCPsocket HostTCP::ListenSocket()
 {
-	while (totalClients < maxClients)
+	while (true)
 	{
 		TCPsocket tempSock = nullptr;
 		tempSock = SDLNet_TCP_Accept(listenSocket);
 		if (!tempSock)
 		{
+			SetConsoleTextColor(2);
 			std::cout << "Listening for Clients. . ." << std::endl;
+			SetConsoleTextColor(7);
 			SDL_Delay(1000);
 		}
 		else
 		{
 			clientIp = SDLNet_TCP_GetPeerAddress(tempSock);
 			clientSockets[totalClients] = tempSock;
-			std::cout << "Client connected: " << SDLNet_Read32(&clientIp->port) << std::endl;
-			return true;
+			std::cout << "Client connected: ";
+
+			SetConsoleTextColor(3);
+			std::cout << SDLNet_Read32(&clientIp->host) << std::endl;
+			SetConsoleTextColor(7);
+
+			totalClients++;
+			std::cout << "Number of Clients: " << totalClients << std::endl;
+			return tempSock;
 		}
 	}
 }
 
-bool HostTCP::SendWelcomeMessage(TCPsocket sock, std::string message)
+bool HostTCP::SendWelcomeMessage(/*TCPsocket sock, */std::string message)
 {
 	int length = message.length() + 1;
-	if (SDLNet_TCP_Send(sock, message.c_str(), length))
+	if (SDLNet_TCP_Send(clientSockets[totalClients], message.c_str(), length))
 	{
+		SetConsoleTextColor(6);
 		std::cout << "Welcome message sent successfully!" << std::endl;
+		SetConsoleTextColor(7);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 		hasMsgSent = true;
 		return true;
 	}
@@ -80,9 +94,10 @@ bool HostTCP::ReceiveMessage()
 	char message[100];
 	while (SDLNet_TCP_Recv(clientSockets[totalClients], message, 100))
 	{
-		std::cout << SDLNet_Read32(&clientIp->port) << " Sent: " << message << std::endl;
-		// Do something here to check if server lost connection with Client and return "is lost connection".
-		//return true;
+		SetConsoleTextColor(3);
+		std::cout << SDLNet_Read32(&clientIp->host) << " Sent: " << message << std::endl;
+		SetConsoleTextColor(7);
+		SDL_Delay(500);
 	}
 	std::cout << "Could not receive message" << std::endl;
 	return false;
@@ -101,6 +116,11 @@ TCPsocket HostTCP::GetClientSock()
 std::string HostTCP::GetWelcomeMessage()
 {
 	return welcomeMessage;
+}
+
+void HostTCP::SetConsoleTextColor(WORD c)
+{
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), c);
 }
 
 void HostTCP::ShutDown()
