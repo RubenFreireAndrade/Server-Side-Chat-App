@@ -43,7 +43,7 @@ bool HostTCP::OpenSocket()
 	return true;
 }
 
-TCPsocket HostTCP::ListenSocket()
+int HostTCP::ListenSocket()
 {
 	while (true)
 	{
@@ -58,69 +58,65 @@ TCPsocket HostTCP::ListenSocket()
 		}
 		else
 		{
-			clientIp = SDLNet_TCP_GetPeerAddress(tempSock);
-			clientSockets[totalClients] = tempSock;
 			std::cout << "Client connected: ";
-
 			SetConsoleTextColor(3);
-			std::cout << SDLNet_Read32(&clientIp->host) << std::endl;
+			std::cout << this->GetIp(tempSock) << std::endl;
 			SetConsoleTextColor(7);
 
-			totalClients++;
-			std::cout << "Number of Clients: " << totalClients << std::endl;
-			return tempSock;
+			clients.push_back(tempSock);
+			std::cout << "Number of Clients: " << clients.size() /*+ 1*/ << std::endl;
+
+			int clientId = clients.size() - 1;
+			if (SendMessage(clientId, welcomeMessage))
+			{
+				SetConsoleTextColor(6);
+				std::cout << "Welcome message sent successfully!" << std::endl;
+				SetConsoleTextColor(7);
+			}
+			return clientId;
 		}
 	}
 }
 
-bool HostTCP::SendWelcomeMessage(/*TCPsocket sock, */std::string message)
+bool HostTCP::SendMessage(int clientId, std::string message)
 {
-	int length = message.length() + 1;
-	if (SDLNet_TCP_Send(clientSockets[totalClients], message.c_str(), length))
+	if (SDLNet_TCP_Send(clients[clientId], message.c_str(), message.length() + 1))
 	{
-		SetConsoleTextColor(6);
-		std::cout << "Welcome message sent successfully!" << std::endl;
-		SetConsoleTextColor(7);
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-		hasMsgSent = true;
 		return true;
 	}
 	std::cout << "Could not send message" << std::endl;
 	return false;
 }
 
-bool HostTCP::ReceiveMessage()
+bool HostTCP::ReceiveMessage(int clientId)
 {
+	TCPsocket sock = clients[clientId];
 	char message[100];
-	while (SDLNet_TCP_Recv(clientSockets[totalClients], message, 100))
+	while (SDLNet_TCP_Recv(sock, message, 100))
 	{
 		SetConsoleTextColor(3);
-		std::cout << SDLNet_Read32(&clientIp->host) << " Sent: " << message << std::endl;
+		std::cout << this->GetIp(sock) << ":" << clientId << " Sent: " << message << std::endl;
 		SetConsoleTextColor(7);
+		for (int cid = 0; cid < clients.size(); cid++)
+		{
+			if (cid == clientId) continue;
+			SendMessage(cid, message);
+		}
 		SDL_Delay(500);
 	}
 	std::cout << "Could not receive message" << std::endl;
 	return false;
 }
 
-bool HostTCP::GetMsgSentFlag()
-{
-	return hasMsgSent;
-}
-
-TCPsocket HostTCP::GetClientSock()
-{
-	return clientSockets[totalClients];
-}
-
-std::string HostTCP::GetWelcomeMessage()
-{
-	return welcomeMessage;
-}
-
 void HostTCP::SetConsoleTextColor(WORD c)
 {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), c);
+}
+
+Uint32 HostTCP::GetIp(TCPsocket sock)
+{
+	IPaddress* clientIp = SDLNet_TCP_GetPeerAddress(sock);
+	return SDLNet_Read32(&clientIp->host);
 }
 
 void HostTCP::ShutDown()

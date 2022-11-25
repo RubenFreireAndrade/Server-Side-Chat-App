@@ -23,18 +23,14 @@ bool App::InitApp()
 
 bool App::RunApp()
 {
-	while (tcp->ListenSocket())
+	int totalClients = 0;
+	while (totalClients < maxClients)
 	{
-		std::thread sendMsgThr(&HostTCP::SendWelcomeMessage, tcp, /*tcp->GetClientSock(),*/ tcp->GetWelcomeMessage());
-		sendMsgThr.join();
-		if (tcp->GetMsgSentFlag())
-		{
-			std::thread receiveMsgThr(&HostTCP::ReceiveMessage, tcp);
-			if (receiveMsgThr.joinable())
-			{
-				receiveMsgThr.detach();
-			}
-		}
+		int clientId = tcp->ListenSocket();
+
+		std::thread receiveMsgThr(&HostTCP::ReceiveMessage, tcp, clientId);
+		receiveMsgThr.detach();
+		totalClients++;
 	}
 	return true;
 }

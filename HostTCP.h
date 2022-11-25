@@ -15,29 +15,21 @@ class HostTCP
 public:
 	HostTCP();
 	~HostTCP();
+	int ListenSocket();
 	bool SDLInitialize();
 	bool OpenSocket();
-	TCPsocket ListenSocket();
-	bool SendWelcomeMessage(/*TCPsocket sock, */std::string message);
-	bool ReceiveMessage(/*TCPsocket sock*/);
-	bool GetMsgSentFlag();
-	TCPsocket GetClientSock();
-	std::string GetWelcomeMessage();
+	bool SendMessage(int clientId, std::string message);
+	bool ReceiveMessage(int clientId);
 	void SetConsoleTextColor(WORD c);
 	void ShutDown();
 
-	int totalClients = 0;
 private:
+	Uint32 GetIp(TCPsocket sock);
 	int defaultColor = 7;
-	int maxClients = 5;
 	const int port = 1234;
-	bool hasMsgSent = false;
 	const std::string welcomeMessage = "Hello! Welcome to the chat.";
 
 	IPaddress ip;
-	IPaddress* clientIp;
-
-	TCPsocket clientSockets[5];
+	std::vector<TCPsocket> clients;
 	TCPsocket listenSocket = nullptr;
-	TCPsocket clientSocket = nullptr;
 };
