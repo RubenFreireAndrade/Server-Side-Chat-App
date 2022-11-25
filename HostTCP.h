@@ -24,12 +24,14 @@ public:
 	void ShutDown();
 
 private:
-	Uint32 GetIp(TCPsocket sock);
 	int defaultColor = 7;
 	const int port = 1234;
+	bool isListening = true;
 	const std::string welcomeMessage = "Hello! Welcome to the chat.";
 
 	IPaddress ip;
 	std::vector<TCPsocket> clients;
 	TCPsocket listenSocket = nullptr;
+	
+	Uint32 GetIp(TCPsocket sock);
 };

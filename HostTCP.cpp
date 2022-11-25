@@ -1,7 +1,5 @@
 #include "HostTCP.h"
 
-std::mutex m;
-
 HostTCP::HostTCP()
 {
 }
@@ -45,33 +43,32 @@ bool HostTCP::OpenSocket()
 
 int HostTCP::ListenSocket()
 {
-	while (true)
+	while (isListening)
 	{
-		TCPsocket tempSock = nullptr;
-		tempSock = SDLNet_TCP_Accept(listenSocket);
+		TCPsocket tempSock = SDLNet_TCP_Accept(listenSocket);
 		if (!tempSock)
 		{
-			SetConsoleTextColor(2);
+			this->SetConsoleTextColor(2);
 			std::cout << "Listening for Clients. . ." << std::endl;
-			SetConsoleTextColor(7);
+			this->SetConsoleTextColor(7);
 			SDL_Delay(1000);
 		}
 		else
 		{
 			std::cout << "Client connected: ";
-			SetConsoleTextColor(3);
+			this->SetConsoleTextColor(3);
 			std::cout << this->GetIp(tempSock) << std::endl;
-			SetConsoleTextColor(7);
+			this->SetConsoleTextColor(7);
 
 			clients.push_back(tempSock);
-			std::cout << "Number of Clients: " << clients.size() /*+ 1*/ << std::endl;
+			std::cout << "Number of Clients: " << clients.size() << std::endl;
 
 			int clientId = clients.size() - 1;
-			if (SendMessage(clientId, welcomeMessage))
+			if (SendMessage(clientId, this->welcomeMessage))
 			{
-				SetConsoleTextColor(6);
+				this->SetConsoleTextColor(6);
 				std::cout << "Welcome message sent successfully!" << std::endl;
-				SetConsoleTextColor(7);
+				this->SetConsoleTextColor(7);
 			}
 			return clientId;
 		}
@@ -94,15 +91,18 @@ bool HostTCP::ReceiveMessage(int clientId)
 	char message[100];
 	while (SDLNet_TCP_Recv(sock, message, 100))
 	{
-		SetConsoleTextColor(3);
-		std::cout << this->GetIp(sock) << ":" << clientId << " Sent: " << message << std::endl;
-		SetConsoleTextColor(7);
-		for (int cid = 0; cid < clients.size(); cid++)
+		SDL_Delay(100);
+		std::cout << "/ / / / / / / / / / / 'Funny Looking Chat Box' / / / / / / / / / / /" << std::endl;
+		this->SetConsoleTextColor(3);
+		std::cout << this->GetIp(sock) << ":" << clientId << " Sent: " << message << "			|" << std::endl;
+		this->SetConsoleTextColor(7);
+		std::cout << "/ / / / / / / / / / / / / / / / / / / / / / / / / / / / / / / / / /" << std::endl;
+		for (int cId = 0; cId < clients.size(); cId++)
 		{
-			if (cid == clientId) continue;
-			SendMessage(cid, message);
+			if (cId == clientId) continue;
+			SendMessage(cId, message);
 		}
-		SDL_Delay(500);
+		SDL_Delay(100);
 	}
 	std::cout << "Could not receive message" << std::endl;
 	return false;

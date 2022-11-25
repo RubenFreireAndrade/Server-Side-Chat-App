@@ -1,7 +1,5 @@
 #include "App.h"
 
-std::mutex mutex;
-
 App::App()
 {
 	tcp = new HostTCP();

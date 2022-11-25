@@ -2,7 +2,6 @@
 #include<string>
 #include<iostream>
 #include<thread>
-#include<mutex>
 
 #include"HostTCP.h"
 
@@ -14,8 +13,8 @@ public:
 	bool RunApp();
 	void ShutDown();
 
-	int maxClients = 5;
 private:
+	int maxClients = 5;
 	HostTCP* tcp;
 };
 
