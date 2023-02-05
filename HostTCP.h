@@ -27,7 +27,7 @@ private:
 	int defaultColor = 7;
 	const int port = 1234;
 	bool isListening = true;
-	const std::string welcomeMessage = "Hello! Welcome to the chat.";
+	const std::string welcomeMessage = "Hello! Welcome To Server!";
 
 	IPaddress ip;
 	std::vector<TCPsocket> clients;

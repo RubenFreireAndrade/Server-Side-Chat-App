@@ -43,13 +43,14 @@ bool HostTCP::OpenSocket()
 
 int HostTCP::ListenSocket()
 {
+	std::cout << "Listening for Clients" << std::endl;
 	while (isListening)
 	{
 		TCPsocket tempSock = SDLNet_TCP_Accept(listenSocket);
 		if (!tempSock)
 		{
 			this->SetConsoleTextColor(2);
-			std::cout << "Listening for Clients. . ." << std::endl;
+			std::cout << ".";
 			this->SetConsoleTextColor(7);
 			SDL_Delay(1000);
 		}
@@ -64,12 +65,16 @@ int HostTCP::ListenSocket()
 			std::cout << "Number of Clients: " << clients.size() << std::endl;
 
 			int clientId = clients.size() - 1;
-			if (SendMessage(clientId, this->welcomeMessage))
+			SendMessage(clientId, this->welcomeMessage);
+
+			for (int cId = 0; cId < clients.size(); cId++)
 			{
-				this->SetConsoleTextColor(6);
-				std::cout << "Welcome message sent successfully!" << std::endl;
-				this->SetConsoleTextColor(7);
+				if (clients.size() > 1)
+				{
+					SendMessage(cId, "Client Connected!");
+				}
 			}
+
 			return clientId;
 		}
 	}
@@ -79,6 +84,7 @@ bool HostTCP::SendMessage(int clientId, std::string message)
 {
 	if (SDLNet_TCP_Send(clients[clientId], message.c_str(), message.length() + 1))
 	{
+		std::cout << "server message: " << message << std::endl;
 		return true;
 	}
 	std::cout << "Could not send message" << std::endl;
