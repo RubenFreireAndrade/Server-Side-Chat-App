@@ -1,9 +1,11 @@
-﻿  HostTCP.cpp
-D:\Server-Side-Chat-App\HostTCP.cpp(101,25): warning C4018: '<': signed/unsigned mismatch
+﻿  App.cpp
+  HostTCP.cpp
+D:\Server-Side-Chat-App\HostTCP.cpp(70,26): warning C4018: '<': signed/unsigned mismatch
+D:\Server-Side-Chat-App\HostTCP.cpp(106,25): warning C4018: '<': signed/unsigned mismatch
+  Main.cpp
   Generating code
-D:\Server-Side-Chat-App\HostTCP.cpp(77): warning C4715: 'HostTCP::ListenSocket': not all control paths return a value
-  3 of 190 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    4 functions had inline decision re-evaluated but remain unchanged
+  Previous IPDB not found, fall back to full compilation.
+D:\Server-Side-Chat-App\HostTCP.cpp(81): warning C4715: 'HostTCP::ListenSocket': not all control paths return a value
+  All 188 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   Server Side Chat App.vcxproj -> D:\Server-Side-Chat-App\Release\Server Side Chat App.exe
